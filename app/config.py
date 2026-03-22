@@ -12,18 +12,14 @@ class Settings:
     SECRET_KEY = os.getenv("SECRET_KEY")
 
     ACCESS_TOKEN_EXPIRE_MINUTES = 15
-    REFRESH_TOKEN_EXPIRE_DAYS = 7
-    OTP_EXPIRE_MINUTES = 5
+    REFRESH_TOKEN_EXPIRE_DAYS   = 7
+    OTP_EXPIRE_MINUTES          = 5
 
-    # Email Configuration
-    EMAIL_FROM    = os.getenv("EMAIL_FROM", "")
-    SMTP_HOST     = os.getenv("SMTP_HOST", "smtp.gmail.com")
-    SMTP_PORT     = int(os.getenv("SMTP_PORT", 587))
-    SMTP_USER     = os.getenv("SMTP_USER", "")
-    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "").replace(" ", "")
+    # Email — using Resend (SMTP blocked on Render free plan)
+    RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 
     # Razorpay
-    RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+    RAZORPAY_KEY_ID     = os.getenv("RAZORPAY_KEY_ID")
     RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 
 
