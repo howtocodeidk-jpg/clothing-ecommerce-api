@@ -1,14 +1,28 @@
-import resend
+import smtplib
+import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from app.config import settings
 
 
 def send_email(to_email: str, subject: str, body: str):
     try:
-        resend.api_key = settings.RESEND_API_KEY
+        print(f"📧 Sending email to: {to_email}")
+        print(f"📧 Using: {settings.SMTP_USER} via {settings.SMTP_HOST}:465")
 
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"]    = settings.EMAIL_FROM
+        msg["To"]      = to_email
+
+        # Plain text
+        msg.attach(MIMEText(body, "plain"))
+
+        # HTML
         html = f"""
         <html>
-          <body style="margin:0;padding:0;background:#0a0a0a;font-family:sans-serif;">
+          <body style="margin:0;padding:0;background:#0a0a0a;
+            font-family:sans-serif;">
             <table width="100%" cellpadding="0" cellspacing="0"
               style="background:#0a0a0a;padding:40px 20px;">
               <tr>
@@ -34,7 +48,8 @@ def send_email(to_email: str, subject: str, body: str):
                           text-align:center;margin-bottom:24px;">
                           <p style="margin:0 0 10px;
                             color:rgba(255,255,255,0.35);
-                            font-size:11px;text-transform:uppercase;
+                            font-size:11px;
+                            text-transform:uppercase;
                             letter-spacing:3px;">
                             Verification Code
                           </p>
@@ -47,7 +62,7 @@ def send_email(to_email: str, subject: str, body: str):
                         <p style="margin:0;
                           color:rgba(255,255,255,0.2);
                           font-size:12px;line-height:1.6;">
-                          If you didn't request this, you can safely
+                          If you didn't request this,
                           ignore this email.
                         </p>
                       </td>
@@ -63,18 +78,27 @@ def send_email(to_email: str, subject: str, body: str):
           </body>
         </html>
         """
+        msg.attach(MIMEText(html, "html"))
 
-        response = resend.Emails.send({
-            "from":    "DRAPE <onboarding@resend.dev>",
-            "to":      [to_email],
-            "subject": subject,
-            "html":    html,
-            "text":    body,
-        })
+        # Use SSL on port 465 — works on Render free plan
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL(
+            settings.SMTP_HOST,
+            465,
+            context=context,
+            timeout=30
+        ) as server:
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+            server.sendmail(
+                settings.EMAIL_FROM,
+                to_email,
+                msg.as_string()
+            )
 
-        print(f"✅ Email sent to: {to_email} | ID: {response['id']}")
+        print(f"✅ Email sent to: {to_email}")
         return True
 
     except Exception as e:
         print(f"❌ Email error: {e}")
+        print(f"❌ Error type: {type(e).__name__}")
         return False
