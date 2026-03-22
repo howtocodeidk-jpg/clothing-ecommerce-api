@@ -1,0 +1,30 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+class Settings:
+
+    # Database
+    DATABASE_URL = os.getenv("DATABASE_URL")
+
+    # Security
+    SECRET_KEY = os.getenv("SECRET_KEY")
+
+    ACCESS_TOKEN_EXPIRE_MINUTES = 15
+    REFRESH_TOKEN_EXPIRE_DAYS = 7
+    OTP_EXPIRE_MINUTES = 5
+
+    # Email Configuration
+    EMAIL_FROM = os.getenv("EMAIL_FROM")
+    SMTP_HOST = os.getenv("SMTP_HOST")
+    SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+    SMTP_USER = os.getenv("SMTP_USER")
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+
+    # Razorpay
+    RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+    RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
+
+
+settings = Settings()
