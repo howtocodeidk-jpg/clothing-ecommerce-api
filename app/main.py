@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.database import Base, SessionLocal, engine
 from app.models.role import Role
-from app.routes import auth, product, cart, address, order, payment, review, coupons
+from app.routes import auth, product, cart, address, order, payment, review, coupons, setup
 from app.utils.response import error_response
 from fastapi.staticfiles import StaticFiles
 
@@ -45,6 +45,7 @@ app.include_router(auth.router)
 app.include_router(product.router)
 app.include_router(cart.router)
 app.include_router(address.router)
+app.include_router(setup.router)
 app.include_router(order.router)
 app.include_router(review.router)
 app.include_router(payment.router)
